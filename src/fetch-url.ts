@@ -37,12 +37,21 @@ async function firecrawl(url: string, fetcher: typeof fetch, timeoutMs: number) 
   const key = process.env.FIRECRAWL_API_KEY;
   if (!key) throw new FetchFailure("FIRECRAWL_API_KEY is not configured");
   const base = process.env.FIRECRAWL_API_URL ?? "https://api.firecrawl.dev";
-  const response = await fetcher(`${base.replace(/\/$/, "")}/v2/scrape`, {
-    method: "POST",
-    signal: AbortSignal.timeout(timeoutMs),
-    headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-    body: JSON.stringify({ url, formats: ["markdown", "html"], onlyMainContent: true }),
-  });
+  let response: Response | undefined;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    response = await fetcher(`${base.replace(/\/$/, "")}/v2/scrape`, {
+      method: "POST",
+      signal: AbortSignal.timeout(timeoutMs),
+      headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
+      body: JSON.stringify({ url, formats: ["markdown", "html"], onlyMainContent: true }),
+    });
+    if (response.status !== 429 && response.status < 500) break;
+    if (attempt === 2) break;
+    const retryAfter = Number(response.headers.get("retry-after"));
+    const delayMs = Number.isFinite(retryAfter) ? retryAfter * 1000 : 500 * 2 ** attempt;
+    await new Promise((resolve) => setTimeout(resolve, Math.min(delayMs, 5_000)));
+  }
+  if (!response) throw new FetchFailure("Firecrawl returned no response");
   if (!response.ok) throw new FetchFailure(`Firecrawl HTTP ${response.status}`, response.status);
   const payload = (await response.json()) as {
     success?: boolean;
@@ -69,6 +78,10 @@ function firecrawlMetadata(raw: Record<string, unknown> | undefined): PageMetada
   };
 }
 
+function firecrawlStatus(raw: Record<string, unknown> | undefined): number | undefined {
+  return typeof raw?.statusCode === "number" ? raw.statusCode : undefined;
+}
+
 async function archivedUrl(url: string, fetcher: typeof fetch, timeoutMs: number): Promise<string> {
   const endpoint = `https://archive.org/wayback/available?url=${encodeURIComponent(url)}`;
   const response = await fetcher(endpoint, { signal: AbortSignal.timeout(timeoutMs) });
@@ -83,8 +96,16 @@ async function archivedUrl(url: string, fetcher: typeof fetch, timeoutMs: number
 
 function usable(markdown: string): boolean {
   const normalized = markdown.replace(/\s+/g, " ").trim();
-  const naturalWords = normalized.match(/\b[\p{L}]{2,}\b/gu) ?? [];
-  return normalized.length >= 80 && naturalWords.length >= 8;
+  const visibleText = normalized
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+    .replace(/https?:\/\/\S+/g, " ");
+  const naturalWords = visibleText.match(/\b[\p{L}]{2,}\b/gu) ?? [];
+  const linkCharacters = [...normalized.matchAll(/!?\[[^\]]*\]\([^)]*\)/g)]
+    .reduce((total, match) => total + match[0].length, 0);
+  const linkHeavyShell = normalized.length < 1_500 && linkCharacters / normalized.length > 0.65;
+  const shortShell = normalized.length < 1_000 && /(subscribe to (our|the) newsletter|enable javascript|javascript (is|appears to be) disabled|sign in( to continue)?|log in( to continue)?|invalid link|error 404|page not found|redirecting you)/i.test(visibleText);
+  return normalized.length >= 80 && naturalWords.length >= 8 && !linkHeavyShell && !shortShell;
 }
 
 export async function fetchUrl(input: string, options: FetchOptions = {}): Promise<FetchResult> {
@@ -99,6 +120,8 @@ export async function fetchUrl(input: string, options: FetchOptions = {}): Promi
     try {
       if (method === "firecrawl") {
         const data = await firecrawl(requestedUrl, fetcher, timeoutMs);
+        const status = firecrawlStatus(data.metadata);
+        if (status !== undefined && status >= 400) throw new FetchFailure(`Firecrawl destination HTTP ${status}`, status);
         const extraction = data.html ? extractHtml(data.html, requestedUrl, "text/html") : undefined;
         const markdown = data.markdown?.trim() || extraction?.markdown || "";
         if (!usable(markdown)) throw new FetchFailure("Extracted content is not usable prose");
@@ -109,7 +132,7 @@ export async function fetchUrl(input: string, options: FetchOptions = {}): Promi
         const resolvedUrl = typeof data.metadata?.sourceURL === "string"
           ? data.metadata.sourceURL
           : typeof data.metadata?.url === "string" ? data.metadata.url : requestedUrl;
-        attempts.push({ method, ok: true, url: requestedUrl, status: 200 });
+        attempts.push({ method, ok: true, url: requestedUrl, status: status ?? 200 });
         return {
           requestedUrl,
           resolvedUrl,

@@ -28,3 +28,14 @@ test("does not print malformed page CSS diagnostics", () => {
   }
   assert.equal(stderr, "");
 });
+
+test("removes executable and styling content before extraction", () => {
+  const result = extractHtml(`<html><body><script>var hugePayload = "not content".repeat(1000)</script><style>.hidden { display: none }</style><main><p>${"Visible article words for the reader. ".repeat(5)}</p></main></body></html>`, "https://example.com");
+  assert.doesNotMatch(result.markdown, /hugePayload|display: none/);
+  assert.match(result.markdown, /Visible article words/);
+});
+
+test("strips CSS before jsdom parses it", () => {
+  const malformedForJsdom = `<html><head><style>@import url(https://fonts.example/css2?family=Inter:wght@300;400&family=Newsreader:opsz,wght@6..72,300;6..72,400);</style></head><body><main><p>${"The article remains readable after malformed CSS is removed. ".repeat(5)}</p></main></body></html>`;
+  assert.doesNotThrow(() => extractHtml(malformedForJsdom, "https://example.com"));
+});

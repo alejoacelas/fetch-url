@@ -1,0 +1,143 @@
+{
+  "generatedAt": "2026-07-12T20:01:35.897Z",
+  "sample": {
+    "urls": 200,
+    "distinctHosts": 117,
+    "maxUrlsPerHost": 4,
+    "firecrawlCalls": 145
+  },
+  "direct": {
+    "successes": 105,
+    "failures": 95,
+    "successRate": 0.525,
+    "latencyMs": {
+      "median": 444,
+      "p95": 1971
+    },
+    "characters": {
+      "median": 4737,
+      "p95": 24986,
+      "maximum": 49111
+    },
+    "failureClasses": [
+      {
+        "reason": "Extracted content is not usable prose",
+        "count": 63
+      },
+      {
+        "reason": "HTTP 403",
+        "count": 11
+      },
+      {
+        "reason": "HTTP 404",
+        "count": 5
+      },
+      {
+        "reason": "HTTP 400",
+        "count": 4
+      },
+      {
+        "reason": "Unsupported content type: image/png",
+        "count": 3
+      },
+      {
+        "reason": "fetch failed",
+        "count": 3
+      },
+      {
+        "reason": "HTTP 999",
+        "count": 3
+      },
+      {
+        "reason": "Unsupported content type: application/pdf",
+        "count": 2
+      },
+      {
+        "reason": "HTTP 401",
+        "count": 1
+      }
+    ]
+  },
+  "firecrawlRescue": {
+    "attempts": 95,
+    "successes": 59,
+    "failures": 36,
+    "rescueRate": 0.6210526315789474,
+    "combinedSuccesses": 164,
+    "combinedSuccessRate": 0.82,
+    "latencyMs": {
+      "median": 654,
+      "p95": 2666
+    },
+    "characters": {
+      "median": 5563,
+      "maximum": 198931,
+      "over100000": 4
+    },
+    "failureClasses": [
+      {
+        "reason": "Extracted content is not usable prose",
+        "count": 20
+      },
+      {
+        "reason": "Firecrawl HTTP 500",
+        "count": 5
+      },
+      {
+        "reason": "Firecrawl destination HTTP 400",
+        "count": 4
+      },
+      {
+        "reason": "Firecrawl destination HTTP 404",
+        "count": 3
+      },
+      {
+        "reason": "Firecrawl HTTP 403",
+        "count": 3
+      },
+      {
+        "reason": "Firecrawl destination HTTP 999",
+        "count": 1
+      }
+    ]
+  },
+  "firecrawlComparison": {
+    "attempts": 50,
+    "pairedSuccesses": 48,
+    "failures": 2,
+    "markdownSizeRatio": {
+      "p25": 1.260175240248728,
+      "median": 2.171823722456634,
+      "p75": 6.137221269296741
+    },
+    "firecrawlAtLeast20PercentLonger": 36,
+    "firecrawlAtLeast2x": 25,
+    "firecrawlAtLeast10x": 10,
+    "within20Percent": 11,
+    "firecrawlAtLeast20PercentShorter": 1,
+    "maximumCharacters": 892222,
+    "over100000Characters": 2
+  },
+  "archiveAfterBothFailed": {
+    "attempts": 36,
+    "successes": 0,
+    "failures": 36,
+    "latencyMs": {
+      "median": 1344
+    },
+    "failureClasses": [
+      {
+        "reason": "No archived snapshot found",
+        "count": 25
+      },
+      {
+        "reason": "Extracted content is not usable prose",
+        "count": 6
+      },
+      {
+        "reason": "fetch failed",
+        "count": 5
+      }
+    ]
+  }
+}

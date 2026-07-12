@@ -35,4 +35,6 @@ FIRECRAWL_API_KEY=fc-... ./dist/cli.js https://example.com --strategy firecrawl
 See [docs/options.md](docs/options.md) for the dependency choices and next implementation slices.
 
 See [the Google History retrieval test](history/2026-07-12-google-history-test.md) for the first live comparison of direct retrieval and Firecrawl.
+
+See [the 200-URL benchmark](history/2026-07-12-200-url-benchmark.md) for retrieval rates, latency percentiles, paired-content review, and the improvement backlog.
 <!--/ai-->

@@ -20,8 +20,10 @@ export function extractHtml(html: string, url: string, contentType?: string): Ex
   // Page CSS and scripts are irrelevant to extraction. Do not let their parser
   // diagnostics contaminate a CLI's stderr or structured output.
   const virtualConsole = new VirtualConsole();
-  const dom = new JSDOM(html, { url, virtualConsole });
+  const contentHtml = html.replace(/<(script|style|noscript|template)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, "");
+  const dom = new JSDOM(contentHtml, { url, virtualConsole });
   const document = dom.window.document;
+  document.querySelectorAll("script, style, noscript, template, svg").forEach((element) => element.remove());
   const images = [...document.querySelectorAll("img[src]")]
     .map((image) => ({
       url: new URL(image.getAttribute("src")!, url).href,
