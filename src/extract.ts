@@ -1,5 +1,5 @@
 import { Readability } from "@mozilla/readability";
-import { JSDOM } from "jsdom";
+import { JSDOM, VirtualConsole } from "jsdom";
 import TurndownService from "turndown";
 import type { ImageInfo, PageMetadata } from "./types.js";
 
@@ -17,7 +17,10 @@ function meta(document: Document, ...selectors: string[]): string | undefined {
 }
 
 export function extractHtml(html: string, url: string, contentType?: string): Extraction {
-  const dom = new JSDOM(html, { url });
+  // Page CSS and scripts are irrelevant to extraction. Do not let their parser
+  // diagnostics contaminate a CLI's stderr or structured output.
+  const virtualConsole = new VirtualConsole();
+  const dom = new JSDOM(html, { url, virtualConsole });
   const document = dom.window.document;
   const images = [...document.querySelectorAll("img[src]")]
     .map((image) => ({

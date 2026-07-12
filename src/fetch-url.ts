@@ -1,5 +1,5 @@
 import { extractHtml } from "./extract.js";
-import type { Attempt, FetchOptions, FetchResult, Strategy } from "./types.js";
+import type { Attempt, FetchOptions, FetchResult, PageMetadata, Strategy } from "./types.js";
 
 const USER_AGENT = "fetch-url/0.1 (+https://github.com/alejoacelas/fetch-url)";
 
@@ -52,6 +52,23 @@ async function firecrawl(url: string, fetcher: typeof fetch, timeoutMs: number) 
   return payload.data;
 }
 
+function firecrawlMetadata(raw: Record<string, unknown> | undefined): PageMetadata {
+  const value = (...keys: string[]): string | undefined => {
+    for (const key of keys) {
+      if (typeof raw?.[key] === "string" && raw[key]) return raw[key] as string;
+    }
+  };
+  return {
+    title: value("title", "ogTitle", "og:title"),
+    byline: value("author", "article:author"),
+    excerpt: value("description", "ogDescription", "og:description"),
+    siteName: value("ogSiteName", "og:site_name"),
+    publishedTime: value("publishedTime", "article:published_time"),
+    language: value("language"),
+    contentType: value("contentType"),
+  };
+}
+
 async function archivedUrl(url: string, fetcher: typeof fetch, timeoutMs: number): Promise<string> {
   const endpoint = `https://archive.org/wayback/available?url=${encodeURIComponent(url)}`;
   const response = await fetcher(endpoint, { signal: AbortSignal.timeout(timeoutMs) });
@@ -65,7 +82,9 @@ async function archivedUrl(url: string, fetcher: typeof fetch, timeoutMs: number
 }
 
 function usable(markdown: string): boolean {
-  return markdown.replace(/\s+/g, " ").trim().length >= 80;
+  const normalized = markdown.replace(/\s+/g, " ").trim();
+  const naturalWords = normalized.match(/\b[\p{L}]{2,}\b/gu) ?? [];
+  return normalized.length >= 80 && naturalWords.length >= 8;
 }
 
 export async function fetchUrl(input: string, options: FetchOptions = {}): Promise<FetchResult> {
@@ -82,15 +101,22 @@ export async function fetchUrl(input: string, options: FetchOptions = {}): Promi
         const data = await firecrawl(requestedUrl, fetcher, timeoutMs);
         const extraction = data.html ? extractHtml(data.html, requestedUrl, "text/html") : undefined;
         const markdown = data.markdown?.trim() || extraction?.markdown || "";
-        if (!usable(markdown)) throw new FetchFailure("Extracted content is too short");
+        if (!usable(markdown)) throw new FetchFailure("Extracted content is not usable prose");
+        const apiMetadata = firecrawlMetadata(data.metadata);
+        const metadata = Object.fromEntries(
+          Object.entries({ ...extraction?.metadata, ...apiMetadata }).filter(([, value]) => value !== undefined),
+        ) as PageMetadata;
+        const resolvedUrl = typeof data.metadata?.sourceURL === "string"
+          ? data.metadata.sourceURL
+          : typeof data.metadata?.url === "string" ? data.metadata.url : requestedUrl;
         attempts.push({ method, ok: true, url: requestedUrl, status: 200 });
         return {
           requestedUrl,
-          resolvedUrl: requestedUrl,
+          resolvedUrl,
           source: method,
           fetchedAt: new Date().toISOString(),
           markdown,
-          metadata: options.includeMetadata ? extraction?.metadata : undefined,
+          metadata: options.includeMetadata ? metadata : undefined,
           images: options.includeImages ? extraction?.images : undefined,
           attempts,
         };
@@ -99,7 +125,7 @@ export async function fetchUrl(input: string, options: FetchOptions = {}): Promi
       const target = method === "archive" ? await archivedUrl(requestedUrl, fetcher, timeoutMs) : requestedUrl;
       const response = await direct(target, fetcher, timeoutMs);
       const extraction = extractHtml(response.body, response.resolvedUrl, response.contentType);
-      if (!usable(extraction.markdown)) throw new FetchFailure("Extracted content is too short", response.status);
+      if (!usable(extraction.markdown)) throw new FetchFailure("Extracted content is not usable prose", response.status);
       attempts.push({ method, ok: true, url: target, status: response.status });
       return {
         requestedUrl,

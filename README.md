@@ -33,4 +33,6 @@ FIRECRAWL_API_KEY=fc-... ./dist/cli.js https://example.com --strategy firecrawl
 - Readability extracts the main article. Navigation, comments, and other surrounding text may be omitted.
 
 See [docs/options.md](docs/options.md) for the dependency choices and next implementation slices.
+
+See [the Google History retrieval test](history/2026-07-12-google-history-test.md) for the first live comparison of direct retrieval and Firecrawl.
 <!--/ai-->
