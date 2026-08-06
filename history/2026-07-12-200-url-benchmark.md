@@ -1,8 +1,3 @@
----
-human_edit_tracking:
-  enabled: true
-  history: []
----
 # 200-URL benchmark — 2026-07-12
 
 ## Result

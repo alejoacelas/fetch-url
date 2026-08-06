@@ -1,8 +1,3 @@
----
-human_edit_tracking:
-  enabled: true
-  history: []
----
 # Google History retrieval test — 2026-07-12
 
 ## Method
