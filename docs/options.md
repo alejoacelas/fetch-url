@@ -1,4 +1,8 @@
-<!--ai-->
+---
+human_edit_tracking:
+  enabled: true
+  history: []
+---
 # Implementation options
 
 ## Recommendation
@@ -76,4 +80,3 @@ Keep provenance fields mandatory. Metadata and images are opt-in because large i
 - Add Firecrawl before archive in `auto` only when a key exists; absence of a key is a recorded skipped attempt today and could instead be omitted from the attempt list.
 - The current 80-character usability threshold is a guard against block pages and empty shells. Replace it with fixtures from actual failures before making it more elaborate.
 - Decide whether archive selection means nearest snapshot, latest successful snapshot, or snapshot before a requested date. The availability API supplies the closest snapshot; CDX is needed for explicit date/status selection.
-<!--/ai-->
