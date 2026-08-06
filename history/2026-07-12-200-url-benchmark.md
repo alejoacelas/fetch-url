@@ -1,8 +1,4 @@
----
-human_edit_tracking:
-  enabled: true
-  history: []
----
+<!--ai-->
 # 200-URL benchmark — 2026-07-12
 
 ## Result
@@ -125,3 +121,4 @@ Query CDX for several successful HTML snapshots, retry replay variants, record c
 ### 7. Build a human-labeled quality set
 
 Label a stratified sample by page type—article, documentation, directory/search, landing page, SPA, social, PDF, image—with completeness, boilerplate, and correctness scores. Then report false-success rates and direct/Firecrawl win/tie/loss. Character ratios alone cannot answer which output is better.
+<!--/ai-->

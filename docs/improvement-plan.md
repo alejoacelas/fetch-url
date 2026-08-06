@@ -1,8 +1,4 @@
----
-human_edit_tracking:
-  enabled: true
-  history: []
----
+<!--ai-->
 # Improvement plan
 
 ## Recommendation
@@ -256,3 +252,4 @@ The next benchmark should report:
 - archive lookup hit, replay success, and freshness by provider.
 
 The target is not maximum Markdown length. It is the smallest result that preserves every content block relevant to the requested scope, with the full capture still inspectable.
+<!--/ai-->

@@ -1,8 +1,4 @@
----
-human_edit_tracking:
-  enabled: true
-  history: []
----
+<!--ai-->
 # Google History retrieval test — 2026-07-12
 
 ## Method
@@ -43,3 +39,4 @@ The comparison took about 23 seconds for 16 retrievals on this machine and netwo
 ## Remaining gap
 
 Successful direct extraction can still contain less content than Firecrawl. `auto` cannot know that without paying for both calls. Keep direct-first as the default; use `--strategy firecrawl` when completeness matters more than latency and credits. A future `--prefer-complete` mode could run both and select by extraction score.
+<!--/ai-->
