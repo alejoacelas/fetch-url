@@ -1,4 +1,8 @@
-<!--ai-->
+---
+human_edit_tracking:
+  enabled: true
+  history: []
+---
 # fetch-url
 
 Give it a link; get the page as clean Markdown. It tries ordinary HTTP first, can use Firecrawl for blocked pages, and falls back to the Wayback Machine when the live page is unavailable.
@@ -54,4 +58,3 @@ See [the Google History retrieval test](history/2026-07-12-google-history-test.m
 See [the 200-URL benchmark](history/2026-07-12-200-url-benchmark.md) for retrieval rates, latency percentiles, paired-content review, and the improvement backlog.
 
 See [the improvement plan](docs/improvement-plan.md) for candidate selection, Firecrawl cleaning, an optional OpenRouter judge, output limits, and additional archive providers.
-<!--/ai-->
