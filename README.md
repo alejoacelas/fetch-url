@@ -1,8 +1,3 @@
----
-human_edit_tracking:
-  enabled: true
-  history: []
----
 # fetch-url
 
 Give it a link; get the page as clean Markdown. It tries ordinary HTTP first, can use Firecrawl for blocked pages, and falls back to the Wayback Machine when the live page is unavailable.
