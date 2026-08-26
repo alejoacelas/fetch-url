@@ -6,3 +6,5 @@ dist/
 *.log
 history/*-raw*.json
 history/page-results/
+archive/**/history/*-raw*.json
+archive/**/history/page-results/
