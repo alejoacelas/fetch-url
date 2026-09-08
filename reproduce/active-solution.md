@@ -16,7 +16,7 @@ The plugin runs `npx -y llms-fetch-mcp`. Given a URL, it tries `llms-full.txt`, 
 
 ## Previous attempt
 
-Commit `db9f9f7` was the last pre-archive state of the custom TypeScript implementation. The whole implementation, its setup, tests, plans, and benchmark results now live in [`archive/2026-08-26-custom-fetcher/`](../archive/2026-08-26-custom-fetcher/).
+Commit `db9f9f7` was the last pre-archive state of the custom TypeScript implementation. The whole implementation, its setup, tests, plans, and benchmark results now live in [`archive/2026-08-26-custom-fetcher/`](../../../../archive/2026-08-26-custom-fetcher/).
 
 ## Checks
 
