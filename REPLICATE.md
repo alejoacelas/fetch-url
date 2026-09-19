@@ -67,3 +67,12 @@ Commit `db9f9f7` was the last pre-archive state of the custom TypeScript impleme
 - `claude plugin details llms-fetch-mcp@alignment-hive` reports one MCP server named `llms-fetch`.
 - The archived tests run from the archive directory with `npm test`.
 - The archived build runs there with `npm run build`.
+
+## Retire construction folders
+
+Alejo wanted all `reproduce` folders under `~/best` transitioned to `REPLICATE.md`.
+
+- Consolidated the existing records and updated references for `reproduce`. Preserved scripts, data and maintained procedures in their own folders.
+- Original tracked files remain in Git at `91b900b67a79dd1e996ee28974717c0830715fce`; a full local backup, including ignored files, is at `/Users/alejo/.local/state/reproduce-migration/2026-09-19-_qyg4u7a/before/tools/stable/fetch-url`.
+
+Agent session 01a0bb8d-6d31-76d3-ac4e-aca4c5dfce64 · Commits d7f689065f1efc1cd4968f845797c5df46f8f03a
