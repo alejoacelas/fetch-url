@@ -15,3 +15,12 @@ The human wanted the reorganization finished without breaking existing tools.
 - Repaired the construction record link to the custom fetcher in the shared archive.
 
 Agent session 01a072fe-84d6-73f3-b37e-3bb912088c38 · Commits fetch-url: 892403f
+
+## Agent instructions cleanup — 2026-09-19
+
+Alejo asked to refresh project instructions and remove redundant Claude instruction files where native AGENTS.md loading is available.
+
+- Updated the applicable instructions and removed redundant local Claude copies; distinct content and preserved snapshots remain.
+- Checked instruction references and shared-context freshness; native Claude loading requires 2.1.277+ with the built-in feature enabled.
+
+Agent session 01a0b915-3eb2-78b2-9add-6ba48ad9a3b1 · Commits cc33d935b08a9d148f7ddd38faf7520456d490ca
