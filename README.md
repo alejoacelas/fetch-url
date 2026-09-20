@@ -4,4 +4,4 @@ I use [llms-fetch-mcp](https://github.com/Crazytieguy/llms-fetch-mcp) as the act
 
 The [custom TypeScript fetcher](../../../archive/2026-08-26-custom-fetcher/) is a past attempt. It remains in the shared archive because its Firecrawl and Wayback fallbacks, provenance model, and 200-URL benchmark may be useful later.
 
-See [REPLICATE.md](REPLICATE.md#record-active-solution) for the installation and decision record.
+See [DECISIONS.md](DECISIONS.md#decision-1) for the active-solution and archive decisions.
